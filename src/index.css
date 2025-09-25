@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Geist";
+  src: url("/Geist-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("/Geist-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("/Geist-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/GeistMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@theme {
+  --color-background: var(--color-gray-50);
+  --color-foreground: var(--color-gray-950);
+  --font-sans: "Geist", Arial, Helvetica, sans-serif;
+  --font-mono: "Geist Mono", Arial, Helvetica, sans-serif;
+  --color-gray-50: oklch(99.2% 0.002 165.1);
+  --color-gray-100: oklch(98% 0.002 165.1);
+  --color-gray-200: oklch(95.6% 0.003 174.5);
+  --color-gray-300: oklch(93.1% 0.003 174.5);
+  --color-gray-400: oklch(91% 0.004 157.2);
+  --color-gray-500: oklch(88.6% 0.004 174.5);
+  --color-gray-600: oklch(85.1% 0.005 165);
+  --color-gray-700: oklch(79.1% 0.005 165);
+  --color-gray-800: oklch(63.9% 0.010 171.6);
+  --color-gray-900: oklch(60.6% 0.010 171.6);
+  --color-gray-925: oklch(50.1% 0.008 174.1);
+  --color-gray-950: oklch(24% 0.012 167.6);
+  --color-green-strong: oklch(49.6% 0.042 187.2);
+  --color-green-subtle: oklch(92.4% 0.013 185.1);
+  --color-purple-strong: oklch(60.5% 0.055 316.4);
+  --color-purple-subtle: oklch(93.6% 0.009 314.8);
+  --color-orange-strong: oklch(61.4% 0.100 37.4);
+  --color-orange-subtle: oklch(95% 0.011 31.1);
+  --color-blue-strong: oklch(64.7% 0.098 254.4);
+  --color-blue-subtle: oklch(94.9% 0.013 251.6);
+}
+
+@layer base {
+  #root {
+    min-height: 100svh;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  body {
+    color: var(--color-foreground);
+    background: var(--color-background);
+    font-family: var(--font-sans);
+    min-height: 100svh;
+    height: 100%;
+  }
+}
