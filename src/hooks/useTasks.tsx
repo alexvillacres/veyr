@@ -60,5 +60,19 @@ export function useTasks() {
     await db.tasks.add(newTask);
   };
 
-  return { tasks, moveTask, addTask };
+  const updateTask = async (
+    taskId: number,
+    updates: { name?: string; goalId?: number }
+  ) => {
+    await db.tasks.update(taskId, {
+      ...updates,
+      updatedAt: new Date(),
+    });
+  };
+
+  const deleteTask = async (taskId: number) => {
+    await db.tasks.delete(taskId);
+  };
+
+  return { tasks, moveTask, addTask, updateTask, deleteTask };
 }
