@@ -1,78 +1,85 @@
 import { useState } from "react";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+} from "@dnd-kit/core";
 import Card from "./components/card";
 import Droppable from "./components/droppable";
 import Draggable from "./components/draggable";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "./db";
+import type { Task } from "./db";
+import { useTasks } from "./hooks/useTasks";
 
 const today = new Date();
-const formattedDate = today.toLocaleDateString("en-US", { weekday: "long", month: "numeric", day: "numeric" });
-
-// Define the structure for our cards
-interface CardData {
-  id: string;
-  title: string;
-  columnId: string;
-}
-
-// Initial data - cards in different columns
-const initialCards: CardData[] = [
-  { id: "card-1", title: "Design simple Kanban board", columnId: "ready" },
-  { id: "card-2", title: "Implement drag and drop", columnId: "doing" },
-  { id: "card-3", title: "Add animations", columnId: "done" },
-];
-
-const columns = [
-  { id: "ready", title: "Ready" },
-  { id: "doing", title: "Doing" },
-  { id: "done", title: "Done" },
-];
+const formattedDate = today.toLocaleDateString("en-US", {
+  weekday: "long",
+  month: "numeric",
+  day: "numeric",
+});
 
 export default function App() {
-  const [cards, setCards] = useState<CardData[]>(initialCards);
-  const [activeCard, setActiveCard] = useState<CardData | null>(null);
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
+
+  const stages = useLiveQuery(() => db.stages.orderBy("order").toArray());
+  const { tasks, moveTask } = useTasks();
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
-    const card = cards.find(c => c.id === active.id);
-    setActiveCard(card || null);
+    const id = Number(String(active.id).replace("task-", ""));
+    const task = tasks.find((t) => t.id === id);
+    setActiveTask(task || null);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    
-    if (!over) return;
 
-    const cardId = active.id as string;
-    const newColumnId = over.id as string;
+    if (!over) {
+      setActiveTask(null);
+      return;
+    }
 
-    setCards(prevCards => 
-      prevCards.map(card => 
-        card.id === cardId 
-          ? { ...card, columnId: newColumnId }
-          : card
-      )
-    );
-    
-    setActiveCard(null);
+    const taskId = Number(String(active.id).replace("task-", ""));
+    const stageKey = String(over.id);
+
+    const stage = stages?.find((s) => s.key === stageKey);
+    if (!stage?.id) {
+      console.error("Stage not found for key:", stageKey);
+      setActiveTask(null);
+      return;
+    }
+
+    // Optimistic update happens inside the hook
+    moveTask(taskId, stage.id);
+    setActiveTask(null);
   };
 
   return (
     <>
-      <header className="shrink-0 flex justify-center items-center top-0 z-10 min-h-[48px] border-b border-gray-400">
-        <span className="font-light text-sm text-gray-600">{formattedDate}</span>
+      <header className="shrink-0 flex justify-center items-center top-0 z-10 min-h-[48px] border-b-[0.5px] border-gray-400">
+        <span className="font-light text-sm text-gray-600">
+          {formattedDate}
+        </span>
       </header>
       <main className="grow-1 grid grid-cols-3 w-full h-full py-4">
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-          {columns.map((column) => (
-            <div className="flex flex-col grow-1 gap-2 h-full border-r border-gray-400 px-4">
-              <span className="text-sm font-light text-gray-800">{column.title}</span>
-              <Droppable key={column.id} id={column.id}>
+          {stages?.map((stage) => (
+            <div
+              key={stage.id}
+              className="flex flex-col grow-1 gap-2 h-full border-r-[0.5px] border-gray-400 px-4"
+            >
+              <span className="text-sm font-light text-gray-800">
+                {stage.name}
+              </span>
+              <Droppable id={stage.key}>
                 <div className="flex flex-col gap-2 col-span-1 h-full">
-                  {cards
-                    .filter(card => card.columnId === column.id)
-                    .map(card => (
-                      <Draggable key={card.id} id={card.id}>
-                        <Card title={card.title} />
+                  {tasks
+                    .filter((task) => task.stageId === stage.id)
+                    .map((task) => (
+                      <Draggable key={task.id} id={`task-${task.id}`}>
+                        <Card title={task.name} />
                       </Draggable>
                     ))}
                 </div>
@@ -80,9 +87,7 @@ export default function App() {
             </div>
           ))}
           <DragOverlay>
-            {activeCard ? (
-              <Card title={activeCard.title} />
-            ) : null}
+            {activeTask ? <Card title={activeTask.name} /> : null}
           </DragOverlay>
         </DndContext>
       </main>

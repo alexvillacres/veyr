@@ -6,7 +6,7 @@ interface CardProps {
 
 export default function Card({ title }: CardProps) {
   return (
-    <div className="flex flex-col gap-2 p-3 bg-gray-100 rounded-lg border border-gray-200 cursor-grab active:cursor-grabbing">
+    <div className="flex flex-col gap-2 p-3 bg-gray-100 rounded-lg border border-gray-200 hover:bg-gray-200/70 hover:border-gray-300/70 transition cursor:pointer active:cursor-grabbing">
       <h1 className="text-sm text-gray-950">{title}</h1>
       <div className="flex flex-row gap-2">
         <Tag />

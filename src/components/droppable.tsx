@@ -6,21 +6,23 @@ interface DroppableProps {
 }
 
 export default function Droppable({ id, children }: DroppableProps) {
-    const { isOver, setNodeRef } = useDroppable({
-        id: id
-    })
+  const { isOver, setNodeRef } = useDroppable({
+    id: id,
+  });
 
-    const style = {
-        backgroundColor: isOver ? 'var(--color-gray-100)' : undefined,
-        border: isOver ? '1px dashed var(--color-gray-300)' : '2px dashed transparent',
-        borderRadius: '8px',
-        minHeight: 'calc(100% - 32px)',
-        transition: 'all 0.2s ease'
-    }
-    
-    return (
-        <div ref={setNodeRef} style={style}>
-            {children}
-        </div>
-    );
+  const style = {
+    backgroundColor: isOver ? "var(--color-gray-100)" : undefined,
+    border: isOver
+      ? "1px dashed var(--color-gray-300)"
+      : "2px dashed transparent",
+    borderRadius: "8px",
+    minHeight: "calc(100% - 32px)",
+    transition: "all 0.2s ease",
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      {children}
+    </div>
+  );
 }
