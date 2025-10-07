@@ -17,10 +17,21 @@ interface EditTaskDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps) {
+export function EditTaskDialog({
+  task,
+  open,
+  onOpenChange,
+}: EditTaskDialogProps) {
   const [errors, setErrors] = useState({});
   const { updateTask, deleteTask } = useTasks();
-  const goals = useLiveQuery(() => db.goals.where("status").equals("active").toArray());
+  const goals = useLiveQuery(() =>
+    db.goals.where("status").equals("active").toArray(),
+  );
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    void submitForm(e);
+  };
 
   const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -71,10 +82,7 @@ export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps
             className="flex flex-col gap-2"
             errors={errors}
             onClearErrors={setErrors}
-            onSubmit={async (event) => {
-              const response = await submitForm(event);
-              setErrors(response.errors);
-            }}
+            onSubmit={handleSubmit}
           >
             <Field.Root
               name="name"
@@ -88,7 +96,7 @@ export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps
                 required
                 defaultValue={task.name}
                 placeholder="Enter task name..."
-                className="h-10 w-full rounded-md border-[0.5px] border-gray-300 pl-3.5 text-base font-light text-gray-900 focus:outline focus:outline-2 focus:-outline-offset-1 focus:outline-blue-800"
+                className="h-10 w-full rounded-md border-[0.5px] border-gray-300 pl-3.5 text-base font-light text-gray-900 focus:outline focus:-outline-offset-1 focus:outline-blue-800"
               />
               <Field.Error className="text-sm text-red-800" />
             </Field.Root>
@@ -105,7 +113,7 @@ export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps
                   <select
                     {...props}
                     defaultValue={task.goalId?.toString() || ""}
-                    className="h-10 w-full rounded-md border-[0.5px] border-gray-300 px-3.5 text-base font-light text-gray-900 focus:outline focus:outline-2 focus:-outline-offset-1 focus:outline-blue-800"
+                    className="h-10 w-full rounded-md border-[0.5px] border-gray-300 px-3.5 text-base font-light text-gray-900 focus:outline focus:-outline-offset-1 focus:outline-blue-800"
                   >
                     <option value="">No goal</option>
                     {goals?.map((goal) => (
@@ -122,19 +130,21 @@ export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps
             <div className="flex justify-between gap-4 mt-4">
               <button
                 type="button"
-                onClick={handleDelete}
-                className="flex h-10 items-center justify-center gap-2 rounded-md border border-red-300 bg-red-50 px-3.5 text-sm text-red-700 select-none hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-red-600 active:bg-red-100"
+                onClick={() => {
+                  void handleDelete();
+                }}
+                className="flex h-10 items-center justify-center gap-2 rounded-md border border-red-300 bg-red-50 px-3.5 text-sm text-red-700 select-none hover:bg-red-100 focus-visible:outline focus-visible:-outline-offset-1 focus-visible:outline-red-600 active:bg-red-100"
               >
                 <Trash2 size={16} />
                 Delete
               </button>
               <div className="flex gap-2">
-                <Dialog.Close className="flex h-10 items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3.5 text-sm text-gray-900 select-none hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-blue-800 active:bg-gray-100">
+                <Dialog.Close className="flex h-10 items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3.5 text-sm text-gray-900 select-none hover:bg-gray-100 focus-visible:outline focus-visible:-outline-offset-1 focus-visible:outline-blue-800 active:bg-gray-100">
                   Cancel
                 </Dialog.Close>
                 <button
                   type="submit"
-                  className="flex h-10 items-center justify-center rounded-md border border-gray-200 bg-gray-900 px-3.5 text-sm text-gray-50 select-none hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-blue-800 active:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-200"
+                  className="flex h-10 items-center justify-center rounded-md border border-gray-200 bg-gray-900 px-3.5 text-sm text-gray-50 select-none hover:bg-gray-800 focus-visible:outline focus-visible:-outline-offset-1 focus-visible:outline-blue-800 active:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-200"
                 >
                   Save changes
                 </button>
@@ -146,4 +156,3 @@ export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps
     </Dialog.Root>
   );
 }
-

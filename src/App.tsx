@@ -15,8 +15,8 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, seedIfEmpty } from "./db";
 import type { Task } from "./db";
 import { useTasks } from "./hooks/useTasks";
-import { AddTaskButton } from "./components/add-task-button";
-import { EditTaskDialog } from "./components/edit-task-dialog";
+import { AddTaskButton } from "./components/addTaskButton";
+import { EditTaskDialog } from "./components/editTaskDialog";
 
 const today = new Date();
 const formattedDate = today.toLocaleDateString("en-US", {
