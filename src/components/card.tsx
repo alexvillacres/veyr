@@ -46,7 +46,7 @@ export default function Card({
 
   return (
     <div
-      className="flex flex-col gap-2 p-3 mb-2 bg-gray-100 rounded-lg border border-gray-200 hover:bg-gray-200/70 hover:border-gray-300/70 transition group/card"
+      className="flex flex-col gap-2 p-3 mb-2 bg-gray-100 rounded-lg border border-gray-200 hover:bg-gray-200/70 hover:border-gray-300/70 transition group/card min-h-[60px]"
       {...props}
     >
       <div className="flex items-start justify-between gap-2">
@@ -58,12 +58,12 @@ export default function Card({
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleSave}
             onKeyDown={handleKeyDown}
-            className="flex-1 text-sm text-gray-950 bg-white border border-blue-500 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 text-sm text-gray-950 outline-0 ring-0"
             onClick={(e) => e.stopPropagation()}
           />
         ) : (
           <h1
-            className="flex-1 text-sm text-gray-950 cursor-text hover:text-gray-700"
+            className="flex-1 text-sm text-gray-950 cursor-text hover:text-gray-900 transition"
             onClick={(e) => {
               e.stopPropagation();
               setIsEditing(true);

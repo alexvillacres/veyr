@@ -19,6 +19,11 @@ export function AddTaskButton({ className, stageId }: ButtonProps) {
   const [errors, setErrors] = useState({});
   const { addTask } = useTasks();
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    void submitForm(e);
+  };
+
   const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -66,10 +71,7 @@ export function AddTaskButton({ className, stageId }: ButtonProps) {
               className="flex flex-col gap-2"
               errors={errors}
               onClearErrors={setErrors}
-              onSubmit={async (event) => {
-                const response = await submitForm(event);
-                setErrors(response.errors);
-              }}
+              onSubmit={handleSubmit}
             >
               <Field.Root
                 name="name"
@@ -82,17 +84,17 @@ export function AddTaskButton({ className, stageId }: ButtonProps) {
                   type="text"
                   required
                   placeholder="Enter task name..."
-                  className="h-10 w-full rounded-md border-[0.5px] border-gray-300 pl-3.5 text-base font-light text-gray-900 focus:outline focus:outline-2 focus:-outline-offset-1 focus:outline-blue-800"
+                  className="h-10 w-full rounded-md border-[0.5px] border-gray-300 pl-3.5 text-base font-light text-gray-900 focus:outline focus:-outline-offset-1 focus:outline-blue-800"
                 />
                 <Field.Error className="text-sm text-red-800" />
               </Field.Root>
               <div className="flex justify-between gap-4 mt-4">
-                <Dialog.Close className="flex h-10 items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3.5 text-sm text-gray-900 select-none hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-blue-800 active:bg-gray-100">
+                <Dialog.Close className="flex h-10 items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3.5 text-sm text-gray-900 select-none hover:bg-gray-100 focus-visible:outline focus-visible:-outline-offset-1 focus-visible:outline-blue-800 active:bg-gray-100">
                   Cancel
                 </Dialog.Close>
                 <button
                   type="submit"
-                  className="flex h-10 items-center justify-center rounded-md border border-gray-200 bg-gray-900 px-3.5 text-sm text-gray-50 select-none hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-blue-800 active:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-200"
+                  className="flex h-10 items-center justify-center rounded-md border border-gray-200 bg-gray-900 px-3.5 text-sm text-gray-50 select-none hover:bg-gray-800 focus-visible:outline focus-visible:-outline-offset-1 focus-visible:outline-blue-800 active:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-200"
                 >
                   Create task
                 </button>

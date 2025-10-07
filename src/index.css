@@ -93,4 +93,7 @@
     min-height: 100svh;
     height: 100%;
   }
+  body::selection {
+    background-color: oklch(50.1% 0.008 174.1 / 20%);
+  }
 }

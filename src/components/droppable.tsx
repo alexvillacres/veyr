@@ -14,9 +14,9 @@ export default function Droppable({ id, children }: DroppableProps) {
     backgroundColor: isOver ? "var(--color-gray-100)" : undefined,
     border: isOver
       ? "1px dashed var(--color-gray-300)"
-      : "2px dashed transparent",
+      : "1px dashed transparent",
     borderRadius: "8px",
-    minHeight: "calc(100% - 32px)",
+    minHeight: "100%",
     transition: "all 0.2s ease",
   };
 

@@ -3,13 +3,14 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, type Task } from "../db";
 
 export function useTasks() {
-  const dbTasks = useLiveQuery(() => db.tasks.toArray()) || [];
+  const dbTasks = useLiveQuery(() => db.tasks.toArray());
   const [optimisticUpdates, setOptimisticUpdates] = useState<
     Map<number, Partial<Task>>
   >(new Map());
 
   // Merge DB tasks with optimistic updates
   const tasks = useMemo(() => {
+    if (!dbTasks) return [];
     return dbTasks.map((task) => {
       const updates = optimisticUpdates.get(task.id!);
       return updates ? { ...task, ...updates } : task;
@@ -57,21 +58,29 @@ export function useTasks() {
     };
 
     // Could add optimistic rendering here with a temp ID if needed
-    await db.tasks.add(newTask);
+    await db.tasks.add(newTask).catch((error) => {
+      console.error("Failed to create new task", error);
+    });
   };
 
   const updateTask = async (
     taskId: number,
-    updates: { name?: string; goalId?: number }
+    updates: { name?: string; goalId?: number },
   ) => {
-    await db.tasks.update(taskId, {
-      ...updates,
-      updatedAt: new Date(),
-    });
+    await db.tasks
+      .update(taskId, {
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .catch((error) => {
+        console.error("Failed to update task", error);
+      });
   };
 
   const deleteTask = async (taskId: number) => {
-    await db.tasks.delete(taskId);
+    await db.tasks.delete(taskId).catch((error) => {
+      console.error("Failed to delete task", error);
+    });
   };
 
   return { tasks, moveTask, addTask, updateTask, deleteTask };
