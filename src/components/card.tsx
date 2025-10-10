@@ -1,17 +1,24 @@
 import { useState, useRef, useEffect } from "react";
 import { MoreHorizontal } from "lucide-react";
 import Tag from "./tag";
+import type { GoalColorKey } from "@/constants/colors";
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
+  goalName?: string;
+  goalColor?: GoalColorKey;
   onTitleChange?: (newTitle: string) => void;
   onOptionsClick?: () => void;
+  onGoalClick?: () => void;
 }
 
 export default function Card({
   title,
+  goalName,
+  goalColor,
   onTitleChange,
   onOptionsClick,
+  onGoalClick,
   ...props
 }: CardProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -85,9 +92,13 @@ export default function Card({
           </button>
         )}
       </div>
-      <div className="flex flex-row gap-2">
-        <Tag />
-      </div>
+      {goalName && (
+        <div className="flex flex-row gap-2">
+          <Tag color={goalColor} onClick={onGoalClick}>
+            {goalName}
+          </Tag>
+        </div>
+      )}
     </div>
   );
 }

@@ -13,10 +13,13 @@ import Droppable from "./components/droppable";
 import Draggable from "./components/draggable";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, seedIfEmpty } from "./db";
-import type { Task } from "./db";
+import type { Task, Goal } from "./db";
+import type { GoalColorKey } from "@/constants/colors";
 import { useTasks } from "./hooks/useTasks";
+import { useGoals } from "./hooks/useGoals";
 import { AddTaskButton } from "./components/addTaskButton";
 import { EditTaskDialog } from "./components/editTaskDialog";
+import { GoalEditDialog } from "./components/goalEditDialog";
 
 const today = new Date();
 const formattedDate = today.toLocaleDateString("en-US", {
@@ -28,6 +31,7 @@ const formattedDate = today.toLocaleDateString("en-US", {
 export default function App() {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
 
   useEffect(() => {
     seedIfEmpty().catch((error) => {
@@ -37,6 +41,18 @@ export default function App() {
 
   const stages = useLiveQuery(() => db.stages.orderBy("order").toArray());
   const { tasks, moveTask, updateTask } = useTasks();
+  const { goals } = useGoals();
+
+  // Create a map of goal IDs to goal data for quick lookup
+  const goalMap = new Map(
+    goals.map((goal) => [
+      goal.id, 
+      { 
+        name: goal.name, 
+        color: goal.color as GoalColorKey | undefined
+      }
+    ])
+  );
 
   // Configure sensor to require 5px movement before drag starts
   // This allows clicks to work normally while still enabling drag
@@ -104,21 +120,32 @@ export default function App() {
                   <div className="flex flex-col min-h-full">
                     {tasks
                       .filter((task) => task.stageId === stage.id)
-                      .map((task) => (
-                        <Draggable key={task.id} id={`task-${task.id}`}>
-                          <Card
-                            title={task.name}
-                            onTitleChange={(newTitle) =>
-                              void updateTask(task.id!, {
-                                name: newTitle,
-                              }).catch((error) => {
-                                console.error("Failed to update task", error);
-                              })
-                            }
-                            onOptionsClick={() => setEditingTask(task)}
-                          />
-                        </Draggable>
-                      ))}
+                      .map((task) => {
+                        const goalData = task.goalId ? goalMap.get(task.goalId) : undefined;
+                        return (
+                          <Draggable key={task.id} id={`task-${task.id}`}>
+                            <Card
+                              title={task.name}
+                              goalName={goalData?.name}
+                              goalColor={goalData?.color}
+                              onTitleChange={(newTitle) =>
+                                void updateTask(task.id!, {
+                                  name: newTitle,
+                                }).catch((error) => {
+                                  console.error("Failed to update task", error);
+                                })
+                              }
+                              onOptionsClick={() => setEditingTask(task)}
+                              onGoalClick={() => {
+                                if (task.goalId) {
+                                  const goal = goals.find((g) => g.id === task.goalId);
+                                  if (goal) setEditingGoal(goal);
+                                }
+                              }}
+                            />
+                          </Draggable>
+                        );
+                      })}
                   </div>
                   <AddTaskButton
                     stageId={stage.id!}
@@ -140,6 +167,13 @@ export default function App() {
           task={editingTask}
           open={!!editingTask}
           onOpenChange={(open) => !open && setEditingTask(null)}
+        />
+      )}
+      {editingGoal && (
+        <GoalEditDialog
+          goal={editingGoal}
+          open={!!editingGoal}
+          onOpenChange={(open) => !open && setEditingGoal(null)}
         />
       )}
     </div>

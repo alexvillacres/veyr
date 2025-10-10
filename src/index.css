@@ -70,12 +70,15 @@
   --color-gray-950: oklch(24% 0.012 167.6);
   --color-green-strong: oklch(49.6% 0.042 187.2);
   --color-green-subtle: oklch(92.4% 0.013 185.1);
+  --color-yellow-strong: oklch(86.1% 0.073 102.7);
+  --color-yellow-subtle: oklch(96.8% 0.017 99.6);
   --color-purple-strong: oklch(60.5% 0.055 316.4);
   --color-purple-subtle: oklch(93.6% 0.009 314.8);
   --color-orange-strong: oklch(61.4% 0.1 37.4);
   --color-orange-subtle: oklch(95% 0.011 31.1);
   --color-blue-strong: oklch(64.7% 0.098 254.4);
   --color-blue-subtle: oklch(94.9% 0.013 251.6);
+  --text-xs: 13px;
 }
 
 @layer base {

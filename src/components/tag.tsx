@@ -1,7 +1,29 @@
-export default function Tag() {
+import { GOAL_COLORS, DEFAULT_GOAL_COLOR, type GoalColorKey } from "@/constants/colors";
+
+interface GoalTagProps {
+  children: React.ReactNode;
+  color?: GoalColorKey;
+  onClick?: () => void;
+}
+
+export default function GoalTag({ children, color, onClick }: GoalTagProps) {
+  // Get color config, default to blue if not provided or invalid
+  const colorConfig = color && color in GOAL_COLORS 
+    ? GOAL_COLORS[color] 
+    : GOAL_COLORS[DEFAULT_GOAL_COLOR];
+
   return (
-    <div className="rounded-sm text-xs px-2 py-0.5 font-light text-gray-800 bg-green-subtle">
-      Design Focus
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex flex-row justify-center items-center gap-1 rounded-sm text-xs px-1.5 py-0.5 font-light ${colorConfig.subtleBg} ${colorConfig.strongText} ${
+        onClick ? "cursor-pointer hover:opacity-80 transition-opacity" : ""
+      }`}
+    >
+      {children}
+    </button>
   );
 }
+
+// Keep the old Tag export for backwards compatibility
+export { GoalTag as Tag };

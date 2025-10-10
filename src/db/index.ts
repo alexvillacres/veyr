@@ -13,6 +13,7 @@ interface Task {
 interface Goal {
   id?: number;
   name: string;
+  color?: string;
   status: "active" | "archived";
   order: number;
   createdAt: Date;
@@ -40,6 +41,14 @@ const db = new Dexie("VeyrDB") as Dexie & {
 };
 
 db.version(1).stores({
+  tasks: "++id, name, stageId, [goalId+stageId], [goalId+order]",
+  goals: "++id, status, order",
+  stages: "++id, key, order",
+  meta: "key",
+});
+
+// Version 2: Add color field to goals
+db.version(2).stores({
   tasks: "++id, name, stageId, [goalId+stageId], [goalId+order]",
   goals: "++id, status, order",
   stages: "++id, key, order",
