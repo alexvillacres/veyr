@@ -7,11 +7,11 @@ interface ColorPickerProps {
 
 export function ColorPicker({ value, onChange }: ColorPickerProps) {
   const colorKeys = Object.keys(GOAL_COLORS) as Array<GoalColorKey>;
-  
+
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-xs text-gray-925">Goal Color</label>
-      <div className="flex flex-row gap-3">
+      <label className="text-xs text-gray-925">Pick a color</label>
+      <div className="flex flex-row space-y-1">
         {colorKeys.map((key) => {
           const config = GOAL_COLORS[key];
           return (

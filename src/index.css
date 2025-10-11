@@ -78,6 +78,8 @@
   --color-orange-subtle: oklch(95% 0.011 31.1);
   --color-blue-strong: oklch(64.7% 0.098 254.4);
   --color-blue-subtle: oklch(94.9% 0.013 251.6);
+  --color-red-strong: oklch(62% 0.12 21.1);
+  --color-red-subtle: oklch(94.6% 0.013 17.4);
   --text-xs: 13px;
 }
 
