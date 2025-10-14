@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { GoalSelect } from "../GoalSelect";
-import { TaskDialog } from "../TaskDialog";
 import { Trash2 } from "lucide-react";
 import { useTasks } from "@/hooks/useTasks";
 
@@ -28,8 +27,6 @@ export default function Card({
   const [editValue, setEditValue] = useState(title);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const { deleteTask } = useTasks();
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -72,13 +69,6 @@ export default function Card({
         setIsEditing(false);
       }
     }
-  };
-
-  const handleDelete = () => {
-    if (taskId) {
-      void deleteTask(taskId);
-    }
-    setShowDeleteDialog(false);
   };
 
   return (
@@ -134,35 +124,6 @@ export default function Card({
           }}
         />
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      <TaskDialog
-        open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
-        title="Delete Task"
-      >
-        <div className="px-3 py-2 flex flex-col gap-4">
-          <p className="text-sm text-gray-925 font-light">
-            Are you sure you want to delete{" "}
-            <strong className="text-gray-950">{title}</strong>? This action
-            cannot be undone.
-          </p>
-          <div className="flex justify-between gap-2">
-            <button
-              onClick={() => setShowDeleteDialog(false)}
-              className="flex h-7 items-center justify-center rounded-md border border-gray-300 bg-gray-200 px-2 text-sm text-gray-925 transition select-none hover:bg-gray-300 focus-visible:outline focus-visible:-outline-offset-1 focus-visible:outline-blue-800 active:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleDelete}
-              className="flex h-7 items-center justify-center rounded-md  bg-red-strong px-2 py-1 text-sm text-gray-50 select-none hover:bg-red-strong/90 transition focus-visible:outline focus-visible:-outline-offset-1 focus-visible:outline-red-800 active:bg-red-700"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </TaskDialog>
     </div>
   );
 }
