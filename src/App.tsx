@@ -16,6 +16,7 @@ import { db, seedIfEmpty } from "./db";
 import type { Task } from "./db";
 import { useTasks } from "./hooks/useTasks";
 import { Plus } from "lucide-react";
+import { QuestListButton } from "./components/QuestListButton";
 
 const today = new Date();
 const formattedDate = today.toLocaleDateString("en-US", {
@@ -37,7 +38,7 @@ export default function App() {
   }, []);
 
   const stages = useLiveQuery(() => db.stages.orderBy("order").toArray());
-  const { tasks, moveTask, updateTask, addTask } = useTasks();
+  const { tasks, moveTask, updateTask, addTask, deleteTask } = useTasks();
 
   // Configure sensor to require 5px movement before drag starts
   // This allows clicks to work normally while still enabling drag
@@ -81,10 +82,14 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <header className="flex-shrink-0 flex justify-center items-center z-10 min-h-[48px] border-b-[0.5px] border-gray-400">
+      <header className="flex-shrink-0 flex justify-between items-center z-10 min-h-[48px] border-b-[0.5px] border-gray-400 px-4">
+        <div className="flex-1"></div>
         <span className="font-light text-sm text-gray-600">
           {formattedDate}
         </span>
+        <div className="flex-1 flex justify-end">
+          <QuestListButton />
+        </div>
       </header>
       <main className="flex-1 grid grid-cols-3 w-full overflow-hidden">
         <DndContext
@@ -111,7 +116,7 @@ export default function App() {
                             <Card
                               taskId={task.id}
                               title={task.name}
-                              goalId={task.goalId}
+                              questId={task.questId}
                               onTitleChange={(newTitle) =>
                                 void updateTask(task.id!, {
                                   name: newTitle,
@@ -119,14 +124,19 @@ export default function App() {
                                   console.error("Failed to update task", error);
                                 })
                               }
-                              onGoalChange={(newGoalId) =>
+                              onQuestChange={(newQuestId) =>
                                 void updateTask(task.id!, {
-                                  goalId: newGoalId,
+                                  questId: newQuestId,
                                 }).catch((error) => {
                                   console.error(
-                                    "Failed to update task goal",
+                                    "Failed to update task quest",
                                     error,
                                   );
+                                })
+                              }
+                              onDelete={() =>
+                                void deleteTask(task.id!).catch((error) => {
+                                  console.error("Failed to delete task", error);
                                 })
                               }
                             />
@@ -163,7 +173,7 @@ export default function App() {
                 taskId={activeTask.id}
                 style={{ cursor: "grabbing" }}
                 title={activeTask.name}
-                goalId={activeTask.goalId}
+                questId={activeTask.questId}
               />
             ) : null}
           </DragOverlay>

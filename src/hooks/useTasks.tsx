@@ -47,11 +47,11 @@ export function useTasks() {
       });
   };
 
-  const addTask = async (name: string, stageId: number, goalId?: number) => {
+  const addTask = async (name: string, stageId: number, questId?: number) => {
     const newTask: Task = {
       name,
       stageId,
-      goalId,
+      questId,
       order: tasks.length + 1,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -65,7 +65,7 @@ export function useTasks() {
 
   const updateTask = async (
     taskId: number,
-    updates: { name?: string; goalId?: number },
+    updates: { name?: string; questId?: number },
   ) => {
     await db.tasks
       .update(taskId, {

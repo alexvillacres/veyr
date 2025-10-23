@@ -1,25 +1,27 @@
 import { useState, useRef, useEffect } from "react";
-import { GoalSelect } from "../GoalSelect";
+import { QuestSelect } from "../QuestSelect";
 import { Trash2 } from "lucide-react";
-import { useTasks } from "@/hooks/useTasks";
+import { ConfirmDialog } from "../ConfirmDialog";
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   taskId?: number;
   title: string;
-  goalId?: number;
+  questId?: number;
   isNew?: boolean;
   onTitleChange?: (newTitle: string) => void;
-  onGoalChange?: (goalId: number | undefined) => void;
+  onQuestChange?: (questId: number | undefined) => void;
+  onDelete?: () => void;
   onCancel?: () => void;
 }
 
 export default function Card({
   taskId,
   title,
-  goalId,
+  questId,
   isNew = false,
   onTitleChange,
-  onGoalChange,
+  onQuestChange,
+  onDelete,
   onCancel,
   ...props
 }: CardProps) {
@@ -72,10 +74,25 @@ export default function Card({
   };
 
   return (
-    <div
-      className="flex flex-col items-start gap-2 p-3 mb-2 bg-gray-100 rounded-lg border border-gray-200 hover:bg-gray-200/70 hover:border-gray-300/70 transition group/card min-h-[60px]"
-      {...props}
-    >
+    <>
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Delete Task"
+        message={`Are you sure you want to delete "${title}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={() => {
+          onDelete?.();
+          setShowDeleteDialog(false);
+        }}
+        onCancel={() => setShowDeleteDialog(false)}
+        variant="danger"
+      />
+
+      <div
+        className="flex flex-col items-start gap-2 p-3 mb-2 bg-gray-100 rounded-lg border border-gray-200 hover:bg-gray-200/70 hover:border-gray-300/70 transition group/card min-h-[60px]"
+        {...props}
+      >
       <div className="flex justify-between gap-2 w-full">
         {isEditing ? (
           <input
@@ -117,13 +134,14 @@ export default function Card({
         )}
       </div>
       <div onClick={(e) => e.stopPropagation()}>
-        <GoalSelect
-          selectedGoalId={goalId}
-          onSelect={(newGoalId) => {
-            onGoalChange?.(newGoalId);
+        <QuestSelect
+          selectedQuestId={questId}
+          onSelect={(newQuestId) => {
+            onQuestChange?.(newQuestId);
           }}
         />
       </div>
-    </div>
+      </div>
+    </>
   );
 }

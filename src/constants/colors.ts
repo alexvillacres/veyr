@@ -1,11 +1,13 @@
-export const GOAL_COLORS = {
+export const QUEST_COLORS = {
   green: {
     name: "Green",
     subtleBg: "bg-green-subtle",
     solidBg: "bg-green-strong",
     strongText: "text-green-strong",
     subtleText: "text-green-subtle",
+    hoverShadow: "hover:shadow-[0px_0px_8px_2px_#466a66]",
     ring: "ring-green-strong",
+    hoverRing: "hover:ring-green-strong",
   },
   blue: {
     name: "Blue",
@@ -13,7 +15,9 @@ export const GOAL_COLORS = {
     solidBg: "bg-blue-strong",
     strongText: "text-blue-strong",
     subtleText: "text-blue-subtle",
+    hoverShadow: "hover:shadow-[0px_0px_8px_2px_#6491C9]",
     ring: "ring-blue-strong",
+    hoverRing: "hover:ring-blue-strong",
   },
   purple: {
     name: "Purple",
@@ -21,7 +25,9 @@ export const GOAL_COLORS = {
     solidBg: "bg-purple-strong",
     strongText: "text-purple-strong",
     subtleText: "text-purple-subtle",
+    hoverShadow: "hover:shadow-[0px_0px_8px_2px_#8F7898]",
     ring: "ring-purple-strong",
+    hoverRing: "hover:ring-purple-strong",
   },
   orange: {
     name: "Orange",
@@ -29,7 +35,9 @@ export const GOAL_COLORS = {
     solidBg: "bg-orange-strong",
     strongText: "text-orange-strong",
     subtleText: "text-orange-subtle",
+    hoverShadow: "hover:shadow-[0px_0px_8px_2px_#B86E58]",
     ring: "ring-orange-strong",
+    hoverRing: "hover:ring-orange-strong",
   },
   yellow: {
     name: "Yellow",
@@ -37,10 +45,22 @@ export const GOAL_COLORS = {
     solidBg: "bg-yellow-strong",
     strongText: "text-yellow-strong",
     subtleText: "text-yellow-subtle",
+    hoverShadow: "hover:shadow-[0px_0px_8px_2px_#DAD49C]",
     ring: "ring-yellow-strong",
+    hoverRing: "hover:ring-yellow-strong",
+  },
+  gray: {
+    name: "Gray",
+    subtleBg: "bg-gray-subtle",
+    solidBg: "bg-gray-strong",
+    strongText: "text-gray-strong",
+    subtleText: "text-gray-subtle",
+    hoverShadow: "hover:shadow-[0px_0px_8px_2px_#A0A0A0]",
+    ring: "ring-gray-strong",
+    hoverRing: "hover:ring-gray-strong",
   },
 };
 
-export type GoalColorKey = keyof typeof GOAL_COLORS;
+export type QuestColorKey = keyof typeof QUEST_COLORS;
 
-export const DEFAULT_GOAL_COLOR: GoalColorKey = "blue";
+export const DEFAULT_QUEST_COLOR: QuestColorKey = "blue";

@@ -1,44 +1,43 @@
 import { Select } from "@base-ui-components/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/db";
-import type { Goal } from "@/db";
-import type { GoalColorKey } from "@/constants/colors";
+import type { Quest } from "@/db";
 import { Check } from "lucide-react";
-import GoalTag from "./ui/tag";
+import QuestTag from "./ui/tag";
 
-interface GoalSelectProps {
-  onSelect: (goalId: number | undefined) => void;
-  selectedGoalId?: number;
+interface QuestSelectProps {
+  onSelect: (questId: number | undefined) => void;
+  selectedQuestId?: number;
   placeholder?: string;
 }
 
-export function GoalSelect({
+export function QuestSelect({
   onSelect,
-  selectedGoalId,
-  placeholder = "Select a goal...",
-}: GoalSelectProps) {
-  const goals = useLiveQuery(() =>
-    db.goals.where("status").equals("active").sortBy("order"),
+  selectedQuestId,
+  placeholder = "Select a quest...",
+}: QuestSelectProps) {
+  const quests = useLiveQuery(() =>
+    db.quests.where("status").equals("active").sortBy("order"),
   );
 
-  // Create a map of goal id to goal object for easy lookup
-  const goalMap = new Map<number, Goal & { id: number }>();
-  goals?.forEach((goal) => {
-    if (goal.id !== undefined) {
-      goalMap.set(goal.id, goal as Goal & { id: number });
+  // Create a map of quest id to quest object for easy lookup
+  const questMap = new Map<number, Quest & { id: number }>();
+  quests?.forEach((quest) => {
+    if (quest.id !== undefined) {
+      questMap.set(quest.id, quest as Quest & { id: number });
     }
   });
 
   // Create items mapping for Select.Root (still needs to be Record<number, string>)
-  const items = goals?.reduce(
-    (acc, goal) => {
-      if (goal.id !== undefined) {
-        acc[goal.id] = goal.name;
+  const items = quests?.reduce(
+    (acc, quest) => {
+      if (quest.id !== undefined) {
+        acc[quest.id] = quest.name;
       }
       return acc;
     },
-    { 0: "No goal" } as Record<number, string>,
-  ) || { 0: "No goal" };
+    { 0: "No quest" } as Record<number, string>,
+  ) || { 0: "No quest" };
 
   const handleValueChange = (newValue: number | null) => {
     if (newValue === null || newValue === 0) {
@@ -48,8 +47,8 @@ export function GoalSelect({
     }
   };
 
-  const selectedValue = selectedGoalId ?? 0;
-  const selectedGoal = selectedGoalId ? goalMap.get(selectedGoalId) : null;
+  const selectedValue = selectedQuestId ?? 0;
+  const selectedQuest = selectedQuestId ? questMap.get(selectedQuestId) : null;
 
   return (
     <Select.Root
@@ -60,17 +59,17 @@ export function GoalSelect({
       <Select.Trigger className="w-auto">
         <Select.Value>
           {(value: number | null) => {
-            if (value !== null && value !== 0 && selectedGoal) {
+            if (value !== null && value !== 0 && selectedQuest) {
               return (
-                <GoalTag color={selectedGoal.color as GoalColorKey}>
-                  {selectedGoal.name}
-                </GoalTag>
+                <QuestTag color={selectedQuest.color}>
+                  {selectedQuest.name}
+                </QuestTag>
               );
             }
             if (value === 0) {
               return (
                 <span className="flex flex-row justify-center items-center gap-1 rounded-sm text-xs px-1.5 py-0.5 font-light bg-gray-200 text-gray-600">
-                  No goal
+                  No quest
                 </span>
               );
             }
@@ -88,24 +87,24 @@ export function GoalSelect({
           >
             <Select.Popup className="w-[280px] max-h-[min(var(--available-height),300px)] overflow-y-auto rounded-md border-[0.5px] border-gray-300 bg-white shadow-lg p-1.5 outline-none z-50 origin-[var(--transform-origin)] transition-[transform,scale,opacity] data-[starting-style]:scale-95 data-[starting-style]:opacity-0 data-[ending-style]:scale-95 data-[ending-style]:opacity-0">
             {Object.entries(items).map(([value, label]) => {
-              const goalId = Number(value);
-              const goal = goalMap.get(goalId);
+              const questId = Number(value);
+              const quest = questMap.get(questId);
 
               return (
                 <Select.Item
                   key={value}
-                  value={goalId}
+                  value={questId}
                   className="px-2 py-1.5 cursor-pointer outline-none select-none flex items-center justify-between rounded-sm data-[highlighted]:bg-gray-100"
                 >
                   <Select.ItemText>
-                    {goalId === 0 ? (
+                    {questId === 0 ? (
                       <span className="flex flex-row justify-center items-center gap-1 rounded-sm text-xs px-1.5 py-0.5 font-light bg-gray-200 text-gray-600">
                         {label}
                       </span>
-                    ) : goal ? (
-                      <GoalTag color={goal.color as GoalColorKey}>
+                    ) : quest ? (
+                      <QuestTag color={quest.color}>
                         {label}
-                      </GoalTag>
+                      </QuestTag>
                     ) : (
                       label
                     )}
@@ -122,3 +121,4 @@ export function GoalSelect({
     </Select.Root>
   );
 }
+
