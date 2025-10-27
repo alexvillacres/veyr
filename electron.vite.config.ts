@@ -13,7 +13,10 @@ export default defineConfig({
   renderer: {
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src')
+        '@renderer': resolve('src/renderer/src'),
+        '@components': resolve('src/renderer/src/components'),
+        '@features': resolve('src/renderer/src/features'),
+        '@types': resolve('src/preload/index.d.ts')
       }
     },
     plugins: [
