@@ -6,15 +6,17 @@ interface EditableTitleProps {
   onCommit?: (newTitle: string) => void
   onCancel?: () => void
   className?: string
+  autoFocus?: boolean
 }
 
 export default function EditableTitle({
   title,
   onCommit,
   onCancel,
-  className
+  className,
+  autoFocus = false
 }: EditableTitleProps) {
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(autoFocus)
   const [editValue, setEditValue] = useState(title)
   const inputRef = useRef<HTMLInputElement>(null)
 

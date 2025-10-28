@@ -14,6 +14,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function TaskCard({
   taskId,
   title,
+  isNew,
   onTitleChange,
   onCancel,
   onDelete,
@@ -32,24 +33,27 @@ export default function TaskCard({
   }
 
   return (
-    <>
-      <Card key={taskId} className="relative group/card space-y-2" {...props}>
-        <CardHeader className="flex flex-row items-start gap-2">
-          <EditableTitle title={title} onCommit={handleTitleChange} onCancel={handleCancel} />
-          <Trash2
-            size={16}
-            className="flex-shrink-0 text-muted-foreground opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 hover:text-foreground"
-            onClick={handleDelete}
-          />
-        </CardHeader>
-        <CardContent>
-          <div aria-label="task-quest" className="flex items-center gap-1 text-muted-foreground">
-            <span className="text-xs text-muted-foreground bg-orange-500/10 text-orange-500 px-1.5 py-0.5 rounded-[4px]">
-              Design focus
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-    </>
+    <Card key={taskId} className="relative group/card space-y-2" {...props}>
+      <CardHeader className="flex flex-row items-start gap-2">
+        <EditableTitle
+          title={title}
+          onCommit={handleTitleChange}
+          onCancel={handleCancel}
+          autoFocus={isNew}
+        />
+        <Trash2
+          size={16}
+          className="flex-shrink-0 text-muted-foreground opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 hover:text-foreground"
+          onClick={handleDelete}
+        />
+      </CardHeader>
+      <CardContent>
+        <div aria-label="task-quest" className="flex items-center gap-1 text-muted-foreground">
+          <span className="text-xs text-muted-foreground bg-orange-500/10 text-orange-500 px-1.5 py-0.5 rounded-[4px]">
+            Design focus
+          </span>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

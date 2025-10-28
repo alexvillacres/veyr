@@ -1,7 +1,6 @@
 import { type FC } from 'react'
 import { useState } from 'react'
-import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/card'
-import { Trash2, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import TaskCard from '@components/task-card/task-card'
 import type { Column as ColumnType, Task as TaskType } from '@types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -17,6 +16,22 @@ export const Column: FC<ColumnProps> = ({ column, index, tasks }) => {
   const columnTasks = tasks.filter((task) => task.columnId === column.id)
 
   const queryClient = useQueryClient()
+
+  const createTask = useMutation({
+    mutationFn: async ({ title, columnId }: { title: string; columnId: number }) => {
+      return window.api.tasks.create({ title, columnId })
+    },
+    onSuccess: (newTask) => {
+      queryClient.setQueryData<TaskType[]>(['tasks'], (old) => {
+        if (!old) return [newTask]
+        return [...old, newTask]
+      })
+      setIsCreatingTask(null)
+    },
+    onError: (error) => {
+      console.error('Failed to create task:', error)
+    }
+  })
 
   const updateTask = useMutation({
     mutationFn: async ({ id, title }: { id: number; title: string }) => {
@@ -41,9 +56,18 @@ export const Column: FC<ColumnProps> = ({ column, index, tasks }) => {
     }
   })
 
-  const handleTitleChange = (id: number, newTitle: string) => {
-    updateTask.mutate({ id, title: newTitle })
+  const handleCreateTask = (title: string) => {
+    if (title.trim()) {
+      createTask.mutate({ title: title.trim(), columnId: column.id })
+    } else {
+      setIsCreatingTask(null)
+    }
   }
+
+  const handleUpdateTask = (id: number, title: string) => {
+    updateTask.mutate({ id, title })
+  }
+
   const handleDelete = (id: number) => console.log(`task delete (${id})`)
 
   const getStatusIcon = (columnIndex: number, columnName: string) => {
@@ -98,31 +122,20 @@ export const Column: FC<ColumnProps> = ({ column, index, tasks }) => {
             key={task.id}
             taskId={task.id}
             title={task.title}
-            onTitleChange={(newTitle) => handleTitleChange(task.id, newTitle)}
+            onTitleChange={(newTitle) => handleUpdateTask(task.id, newTitle)}
             onDelete={() => handleDelete(task.id)}
-            onCancel={() => setIsCreatingTask(null)}
           />
         ))}
         {isCreatingTask === column.id && (
-          <Card className="relative group/card space-y-2">
-            <CardHeader className="flex flex-row items-start gap-2">
-              <CardTitle className="text-sm font-light flex-1">New task</CardTitle>
-              <Trash2
-                size={16}
-                className="flex-shrink-0 text-muted-foreground opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 hover:text-foreground"
-              />
-            </CardHeader>
-            <CardContent>
-              <div
-                aria-label="task-quest"
-                className="flex items-center gap-1 text-muted-foreground"
-              >
-                <span className="text-xs text-muted-foreground bg-orange-500/10 text-orange-500 px-1.5 py-0.5 rounded-[4px]">
-                  Design focus
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+          <TaskCard
+            key="new-task"
+            taskId={0}
+            title=""
+            isNew
+            onTitleChange={handleCreateTask}
+            onCancel={() => setIsCreatingTask(null)}
+            onDelete={() => setIsCreatingTask(null)}
+          />
         )}
         {isCreatingTask !== column.id && (
           <button
