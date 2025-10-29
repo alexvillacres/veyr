@@ -3,14 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from './ui/sonner'
 import React from 'react'
-// https://tanstack.com/router/v1/docs/framework/react/devtools
-const TanStackRouterDevtools = import.meta.env.PROD
-  ? () => null
-  : React.lazy(() =>
-      import('@tanstack/router-devtools').then((res) => ({
-        default: res.TanStackRouterDevtools
-      }))
-    )
 
 const ReactQueryDevtools = import.meta.env.PROD ? () => null : ReactQueryDevtoolsBase
 
@@ -34,7 +26,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
           }}
         />
         <React.Suspense>
-          <TanStackRouterDevtools position="bottom-left" />
           <ReactQueryDevtools buttonPosition="bottom-right" />
         </React.Suspense>
       </ThemeProvider>
